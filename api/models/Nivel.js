@@ -6,6 +6,10 @@ const nivelSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    porcentagem: {
+      type: String,
+      required: true,
+    },
   },
   { timestamps: true }
 );

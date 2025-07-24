@@ -5,8 +5,8 @@ const Nivel = require("../models/Nivel");
 router.post("/dados", async (req, res) => {
   // console.log("REQUISIÇÃO RECEBIDA:", req.body);
   try {
-    const { nivel } = req.body;
-    const novoRegistro = new Nivel({ nivel });
+    const { nivel, porcentagem } = req.body;
+    const novoRegistro = new Nivel({ nivel, porcentagem });
     await novoRegistro.save();
     res.status(201).json({ message: "Dados salvos com sucesso!" });
   } catch (error) {
