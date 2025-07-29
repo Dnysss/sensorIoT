@@ -13,6 +13,7 @@ import { Button } from "react-native-paper";
 
 import { Audio } from "expo-av";
 import LoadingOverlay from "@/components/LoadingOverlay";
+import LottieView from "lottie-react-native";
 
 export default function MonitoramentoScreen() {
   const [percentual, setPercentual] = useState(0);
@@ -22,6 +23,8 @@ export default function MonitoramentoScreen() {
   const alertaEnviadoRef = useRef(false);
   const intervaloRef = useRef<number | null>(null);
   const soundRef = useRef<Audio.Sound | null>(null);
+  const lottieRef = useRef<LottieView>(null);
+  const lastFrameRef = useRef(0);
 
   // Atualiza dados do backend
   const carregarDados = async () => {
@@ -34,6 +37,16 @@ export default function MonitoramentoScreen() {
 
       setPercentual(nivel);
       setDataHora(new Date(dado.createdAt).toLocaleString("pt-BR"));
+
+      const totalFrames = 107;
+      const currentFrame = lastFrameRef.current;
+      const targetFrame = (nivel / 100) * totalFrames;
+
+      // Se o nível mudou, anima do ponto anterior ao novo
+      if (Math.abs(targetFrame - currentFrame) > 1) {
+        lottieRef.current?.play(currentFrame, targetFrame);
+        lastFrameRef.current = targetFrame;
+      }
 
       if (nivel >= 80 && !alertaEnviadoRef.current) {
         alertaEnviadoRef.current = true;
@@ -86,6 +99,7 @@ export default function MonitoramentoScreen() {
       }
       setPercentual(0);
       setDataHora("");
+      lastFrameRef.current = 0;
     }
     setMonitorando(!monitorando);
   };
@@ -114,7 +128,18 @@ export default function MonitoramentoScreen() {
 
       {/* Círculo com nível */}
       <View style={styles.circle}>
-        <View style={[styles.fill, { height: `${percentual}%` }]} />
+        <LottieView
+          ref={lottieRef}
+          source={require("../assets/lottie/Water filling up.json")}
+          autoPlay={false}
+          loop={false}
+          style={{
+            width: 250,
+            height: 250,
+            position: "absolute",
+            top: -30,
+          }}
+        />
         <Text style={styles.percentageText}>{percentual}%</Text>
       </View>
 
