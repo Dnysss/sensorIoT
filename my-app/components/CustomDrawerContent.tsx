@@ -20,9 +20,8 @@ export default function CustomDrawerContent(props: any) {
         />
       </View>
 
-      {/* Logo e título */}
+      {/* título */}
       <View style={styles.logoBox}>
-        <Text style={styles.logo}>Logo</Text>
         <Text style={styles.menuTitle}>Menu</Text>
       </View>
 
@@ -37,19 +36,6 @@ export default function CustomDrawerContent(props: any) {
         labelStyle={styles.itemLabel}
         onPress={() => router.push("/analises")}
       />
-
-      {/* Botão de sair */}
-      <View style={styles.logoutBox}>
-        <IconButton
-          icon="power"
-          size={20}
-          mode="contained"
-          onPress={() => console.log("Sair")}
-          iconColor="#fff"
-          style={styles.logoutButton}
-        />
-        <Text style={styles.logoutText}>Sair do app</Text>
-      </View>
     </DrawerContentScrollView>
   );
 }
@@ -67,10 +53,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     marginBottom: 20,
   },
-  logo: {
-    fontSize: 20,
-    color: "#fff",
-  },
   menuTitle: {
     fontSize: 24,
     color: "#fff",
@@ -82,19 +64,5 @@ const styles = StyleSheet.create({
   itemLabel: {
     color: "#fff",
     marginLeft: -16,
-  },
-  logoutBox: {
-    marginTop: 40,
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 20,
-  },
-  logoutButton: {
-    backgroundColor: "#222",
-    marginRight: 10,
-  },
-  logoutText: {
-    color: "#fff",
-    fontSize: 16,
   },
 });

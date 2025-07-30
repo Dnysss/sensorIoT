@@ -6,13 +6,15 @@ import {
   View,
   Vibration,
   ActivityIndicator,
-  Platform,
   Alert,
 } from "react-native";
 import { Button } from "react-native-paper";
-
 import { Audio } from "expo-av";
+
 import LoadingOverlay from "@/components/LoadingOverlay";
+import TopBar from "@/components/TopBar";
+import MonitorButton from "@/components/MonitorButton";
+
 import LottieView from "lottie-react-native";
 
 export default function MonitoramentoScreen() {
@@ -118,9 +120,7 @@ export default function MonitoramentoScreen() {
       <LoadingOverlay visible={carregando} message="Carregando dados..." />
 
       {/* Topo */}
-      <View style={styles.topBar}>
-        <Text style={styles.logoText}>Monitoramento</Text>
-      </View>
+      <TopBar />
 
       {/* Data/hora */}
       <Text style={styles.updateText}>Última atualização:</Text>
@@ -151,28 +151,11 @@ export default function MonitoramentoScreen() {
             : "Aperte o botão abaixo para\ncomeçar o monitoramento"}
         </Text>
 
-        <Button
-          icon={monitorando ? "pause" : "power"}
-          mode="contained"
+        <MonitorButton
+          monitorando={monitorando}
+          carregando={carregando}
           onPress={alternarMonitoramento}
-          disabled={carregando}
-          style={[
-            styles.button,
-            {
-              backgroundColor: monitorando ? "#4caf50" : "#2196f3",
-            },
-          ]}
-          contentStyle={{ paddingVertical: 10 }}
-          labelStyle={{ fontSize: 16 }}
-        >
-          {carregando ? (
-            <ActivityIndicator color="white" size="small" />
-          ) : monitorando ? (
-            "Desligar"
-          ) : (
-            "Monitorar"
-          )}
-        </Button>
+        />
       </View>
     </View>
   );
@@ -184,22 +167,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#1e1e1e",
     padding: 20,
     alignItems: "center",
-  },
-  topBar: {
-    width: "100%",
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginBottom: 30,
-  },
-  menuIcon: {
-    width: 24,
-    height: 18,
-    justifyContent: "space-between",
-  },
-  logoText: {
-    fontSize: 20,
-    color: "#4fc3f7",
-    fontWeight: "bold",
   },
   updateText: {
     color: "white",
@@ -246,21 +213,5 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontSize: 14,
     marginBottom: 40,
-  },
-  button: {
-    borderRadius: 20,
-    width: 180,
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#121212", // fundo escuro
-  },
-  loadingText: {
-    marginTop: 16,
-    color: "#fff",
-    fontSize: 16,
-    fontWeight: "bold",
   },
 });
