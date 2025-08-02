@@ -5,17 +5,15 @@ import {
   Text,
   View,
   Vibration,
-  ActivityIndicator,
   Alert,
+  Animated,
 } from "react-native";
-import { Button } from "react-native-paper";
-import { Audio } from "expo-av";
 
+import { Audio } from "expo-av";
 import LoadingOverlay from "@/components/LoadingOverlay";
 import TopBar from "@/components/TopBar";
 import MonitorButton from "@/components/MonitorButton";
-
-import LottieView from "lottie-react-native";
+import { fontFamily } from "@/dimensions/fontFamily";
 
 export default function MonitoramentoScreen() {
   const [percentual, setPercentual] = useState(0);
@@ -23,10 +21,9 @@ export default function MonitoramentoScreen() {
   const [monitorando, setMonitorando] = useState(false);
   const [carregando, setCarregando] = useState(false);
   const alertaEnviadoRef = useRef(false);
-  const intervaloRef = useRef<number | null>(null);
+  const intervaloRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const soundRef = useRef<Audio.Sound | null>(null);
-  const lottieRef = useRef<LottieView>(null);
-  const lastFrameRef = useRef(0);
+  const animatedValue = useRef(new Animated.Value(0)).current;
 
   // Atualiza dados do backend
   const carregarDados = async () => {
@@ -39,16 +36,6 @@ export default function MonitoramentoScreen() {
 
       setPercentual(nivel);
       setDataHora(new Date(dado.createdAt).toLocaleString("pt-BR"));
-
-      const totalFrames = 107;
-      const currentFrame = lastFrameRef.current;
-      const targetFrame = (nivel / 100) * totalFrames;
-
-      // Se o nível mudou, anima do ponto anterior ao novo
-      if (Math.abs(targetFrame - currentFrame) > 1) {
-        lottieRef.current?.play(currentFrame, targetFrame);
-        lastFrameRef.current = targetFrame;
-      }
 
       if (nivel >= 80 && !alertaEnviadoRef.current) {
         alertaEnviadoRef.current = true;
@@ -101,7 +88,6 @@ export default function MonitoramentoScreen() {
       }
       setPercentual(0);
       setDataHora("");
-      lastFrameRef.current = 0;
     }
     setMonitorando(!monitorando);
   };
@@ -113,6 +99,19 @@ export default function MonitoramentoScreen() {
       }
     };
   }, []);
+
+  useEffect(() => {
+    Animated.timing(animatedValue, {
+      toValue: percentual,
+      duration: 1000,
+      useNativeDriver: false,
+    }).start();
+  }, [percentual]);
+
+  const animatedHeight = animatedValue.interpolate({
+    inputRange: [0, 100],
+    outputRange: ["0%", "100%"],
+  });
 
   return (
     <View style={styles.container}>
@@ -128,18 +127,7 @@ export default function MonitoramentoScreen() {
 
       {/* Círculo com nível */}
       <View style={styles.circle}>
-        <LottieView
-          ref={lottieRef}
-          source={require("../assets/lottie/Water filling up.json")}
-          autoPlay={false}
-          loop={false}
-          style={{
-            width: 250,
-            height: 250,
-            position: "absolute",
-            top: -30,
-          }}
-        />
+        <Animated.View style={[styles.fill, { height: animatedHeight }]} />
         <Text style={styles.percentageText}>{percentual}%</Text>
       </View>
 
@@ -171,11 +159,13 @@ const styles = StyleSheet.create({
   updateText: {
     color: "white",
     fontSize: 20,
+    fontFamily: fontFamily.medium,
   },
   updateSubText: {
     color: "#ccc",
     fontSize: 15,
     marginBottom: 20,
+    fontFamily: fontFamily.regular,
   },
   circle: {
     width: 200,
@@ -199,9 +189,9 @@ const styles = StyleSheet.create({
   percentageText: {
     color: "white",
     fontSize: 22,
-    fontWeight: "bold",
     zIndex: 2,
     marginBottom: 80,
+    fontFamily: fontFamily.bold,
   },
   infoBox: {
     marginBottom: 20,
@@ -213,5 +203,6 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontSize: 14,
     marginBottom: 40,
+    fontFamily: fontFamily.medium,
   },
 });

@@ -1,8 +1,27 @@
 import { Drawer } from "expo-router/drawer";
 import CustomDrawerContent from "../components/CustomDrawerContent";
 import { Image } from "react-native";
+import { useFonts } from "expo-font";
+import { fontFamily } from "@/dimensions/fontFamily";
+import { useEffect } from "react";
+import { SplashScreen } from "expo-router";
 
 export default function RootLayout() {
+  const [loaded] = useFonts({
+    [fontFamily.bold]: require("../assets/fonts/Poppins-Bold.ttf"),
+    [fontFamily.regular]: require("../assets/fonts/Poppins-Regular.ttf"),
+    [fontFamily.medium]: require("../assets/fonts/Poppins-Medium.ttf"),
+  });
+
+  useEffect(() => {
+    if (loaded) {
+      SplashScreen.hideAsync();
+    }
+  }, [loaded]);
+
+  if (!loaded) {
+    return null;
+  }
   return (
     <Drawer
       screenOptions={{

@@ -1,3 +1,4 @@
+import { fontFamily } from "@/dimensions/fontFamily";
 import { View, Text, StyleSheet } from "react-native";
 
 export default function TopBar() {
@@ -18,6 +19,6 @@ const styles = StyleSheet.create({
   logoText: {
     fontSize: 20,
     color: "#4fc3f7",
-    fontWeight: "bold",
+    fontFamily: fontFamily.bold
   },
 });
